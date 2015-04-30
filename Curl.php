@@ -117,6 +117,11 @@ class Curl
         $this->options[CURLOPT_COOKIE] = session_name() . '=' . session_id() . $cookie; // "a=1; b=2; c=3"
         @session_write_close();
     }
+	
+	public function setMultiplePagesDuringOneSession($enable = true)
+    {
+        $this->options[CURLOPT_COOKIESESSION] = $enable;
+    }
 
     public function setReferer($referer)
     {
