@@ -109,13 +109,10 @@ class Curl
         }, $this->httpHeader);
     }
 
-    public function setCookie($file, $cookie = '')
+    public function setCookie($file, array $cookie = array())
     {
-        @session_start();
-        $this->options[CURLOPT_COOKIEJAR] = $file;
-        $this->options[CURLOPT_COOKIEFILE] = $file;
-        $this->options[CURLOPT_COOKIE] = session_name() . '=' . session_id() . $cookie; // "a=1; b=2; c=3"
-        @session_write_close();
+        $this->options[CURLOPT_COOKIEJAR] = $this->options[CURLOPT_COOKIEFILE] = $file;
+		$this->options[CURLOPT_COOKIE] = join('; ', array_map(function(&$k, &$v){return $k.'='.$v;}, array_keys($cookie), $cookie));
     }
 	
 	public function setMultiplePagesDuringOneSession($enable = true)
