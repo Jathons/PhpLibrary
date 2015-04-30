@@ -1,6 +1,8 @@
 <?php
+
 class Curl
 {
+
     protected $curlHandle, $fileHandle;
 
     public $userAgent = array(
@@ -48,10 +50,9 @@ class Curl
         CURLOPT_SSL_VERIFYHOST => 2, // verify is exists or not
         CURLOPT_TIMEOUT => 36000, // curl exec max seconds,10 h for download big file
         CURLOPT_CONNECTTIMEOUT => 0, // wait exec forever
-        CURLOPT_DNS_CACHE_TIMEOUT => 36000 // dns max seconds,10 h forever
+        CURLOPT_DNS_CACHE_TIMEOUT => 36000, // dns max seconds,10 h forever
     );
-
-
+    
     public function __construct(array $options = array())
     {
         foreach ($options as $k => $v) {
@@ -71,14 +72,14 @@ class Curl
         $this->options[CURLOPT_HEADER] = false;
         $this->options[CURLOPT_NOBODY] = true;
     }
-	
-	public function setModeToHeader()
+
+    public function setModeToHeader()
     {
         $this->options[CURLOPT_HEADER] = true;
         $this->options[CURLOPT_NOBODY] = true;
     }
-	
-	public function setModeToContent()
+
+    public function setModeToContent()
     {
         $this->options[CURLOPT_HEADER] = false;
         $this->options[CURLOPT_NOBODY] = false;
@@ -97,8 +98,7 @@ class Curl
 
     public function setHttpHeader()
     {
-        $this->options[CURLOPT_HTTPHEADER] = array_map(function ($v)
-        {
+        $this->options[CURLOPT_HTTPHEADER] = array_map(function ($v) {
             return str_replace(array(
                 '%s',
                 '%u'
@@ -112,10 +112,12 @@ class Curl
     public function setCookie($file, array $cookie = array())
     {
         $this->options[CURLOPT_COOKIEJAR] = $this->options[CURLOPT_COOKIEFILE] = $file;
-		$this->options[CURLOPT_COOKIE] = join('; ', array_map(function(&$k, &$v){return $k.'='.$v;}, array_keys($cookie), $cookie));
+        $this->options[CURLOPT_COOKIE] = join('; ', array_map(function (&$k, &$v) {
+            return $k . '=' . $v;
+        }, array_keys($cookie), $cookie));
     }
-	
-	public function setMultiplePagesDuringOneSession($enable = true)
+
+    public function setMultiplePagesDuringOneSession($enable = true)
     {
         $this->options[CURLOPT_COOKIESESSION] = $enable;
     }
@@ -166,10 +168,10 @@ class Curl
         }
         
         $result = new stdClass();
-		
+        
         $result->content = curl_exec($this->curlHandle);
-		$result->info = (object)curl_getinfo($this->curlHandle);
-		$result->error = curl_error($this->curlHandle);
+        $result->info = (object) curl_getinfo($this->curlHandle);
+        $result->error = curl_error($this->curlHandle);
         
         return $result;
     }
@@ -197,11 +199,11 @@ class Curl
         } while ($process > 0);
         
         foreach ($curlHandles as $k => $handle) {
-			$result[$k] = new stdClass();
-			
+            $result[$k] = new stdClass();
+            
             $result[$k]->content = curl_multi_getcontent($handle);
-			$result[$k]->info = (object)curl_getinfo($handle);
-			$result[$k]->error = curl_error($handle);
+            $result[$k]->info = (object) curl_getinfo($handle);
+            $result[$k]->error = curl_error($handle);
             
             curl_multi_remove_handle($multiCurlHandles, $handle);
             $isDownLoad && is_resource($fileHandles[$k]) && fclose($fileHandles[$k]);
